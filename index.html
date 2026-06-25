@@ -1,78 +1,34 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#11100e">
-  <meta name="description" content="A quiet personal portfolio page for a software engineer.">
-  <title>First Last - Software Engineer</title>
+  <meta name="theme-color" content="#070908">
+  <meta name="description" content="A minimal landing page.">
+  <title>Start</title>
   <link rel="stylesheet" href="styles.css">
-  <script>
-    try {
-      const savedTheme = localStorage.getItem("portfolio-theme");
-      if (savedTheme === "light" || savedTheme === "dark") {
-        document.documentElement.dataset.theme = savedTheme;
-      }
-    } catch {
-      document.documentElement.dataset.theme = "dark";
-    }
-  </script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <main class="page-shell">
-    <header class="profile-header" aria-labelledby="profile-name">
-      <div class="avatar" aria-hidden="true">FL</div>
+  <div class="development-background" aria-hidden="true">
+    <div class="code-lane code-lane--one">
+      <span>const</span><span>deploy</span><span>=</span><span>await</span><span>build()</span>
+    </div>
+    <div class="code-lane code-lane--two">
+      <span>git</span><span>commit</span><span>--quiet</span><span>origin/main</span>
+    </div>
+    <div class="code-lane code-lane--three">
+      <span>{</span><span>status:</span><span>"starting"</span><span>}</span>
+    </div>
+    <div class="node-map">
+      <i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
 
-      <div class="profile-copy">
-        <h1 id="profile-name">First Last</h1>
-        <p>
-          Software Engineer and Computer Science graduate. Currently building
-          thoughtful software products.
-        </p>
-
-        <nav class="social-links" aria-label="Contact links">
-          <a href="mailto:hello@example.com">Mail</a>
-          <a href="#" aria-label="LinkedIn profile">LinkedIn</a>
-          <a href="#" aria-label="GitHub profile">GitHub</a>
-          <a href="#" aria-label="X profile">X</a>
-        </nav>
-      </div>
-
-      <button class="theme-toggle" type="button" aria-label="Switch to light theme" aria-pressed="false">
-        <span class="theme-toggle__icon" aria-hidden="true"></span>
-      </button>
-    </header>
-
-    <div class="divider" aria-hidden="true"></div>
-
-    <section class="content-section" aria-label="Portfolio content">
-      <nav class="tabs" role="tablist" aria-label="Portfolio sections">
-        <button id="tab-highlights" class="tab is-active" type="button" role="tab" aria-selected="true" aria-controls="panel-highlights" data-tab="highlights">
-          Highlights
-        </button>
-        <button id="tab-experience" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-experience" data-tab="experience">
-          Experience
-        </button>
-        <button id="tab-work" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-work" data-tab="work">
-          Work
-        </button>
-      </nav>
-
-      <section id="panel-highlights" class="panel is-active" role="tabpanel" tabindex="0" aria-labelledby="tab-highlights">
-        <ol class="timeline" data-content="highlights"></ol>
-      </section>
-
-      <section id="panel-experience" class="panel" role="tabpanel" tabindex="0" aria-labelledby="tab-experience" hidden>
-        <div class="entry-list" data-content="experience"></div>
-      </section>
-
-      <section id="panel-work" class="panel" role="tabpanel" tabindex="0" aria-labelledby="tab-work" hidden>
-        <div class="entry-list" data-content="work"></div>
-      </section>
-    </section>
+  <main class="landing" aria-label="Landing page">
+    <a class="start-link" href="under-construction.html">Start</a>
   </main>
 
-  <script src="script.js" defer></script>
+  <div class="inverse-cursor" aria-hidden="true"></div>
 </body>
 </html>

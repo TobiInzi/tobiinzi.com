@@ -1,11 +1,5 @@
 # tobiinzi.com
 
-A static personal portfolio page.
+A static landing page.
 
-## Local preview
-
-Open `index.html` directly in a browser, or run a tiny static server:
-
-```sh
-python3 -m http.server 8080
-```
+Open `index.html` directly in a browser.
