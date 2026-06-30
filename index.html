@@ -3,16 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tobiinzi</title>
+    <title>Tobias Inzinger</title>
     <meta
       name="description"
       content="Personal site and portfolio of tobiinzi."
     />
     <meta name="color-scheme" content="dark" />
     <meta name="author" content="tobiinzi" />
-    <meta name="theme-color" content="#0b0b0c" />
+    <meta name="theme-color" content="#0a0a0d" />
 
-    <link rel="icon" href="assets/types/rainbow.png" type="image/png" />
+    <!-- Favicons: SVG for modern browsers, .ico as the legacy fallback. -->
+    <link rel="icon" href="favicon.ico" sizes="32x32" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
 
     <link
       rel="preload"
@@ -36,12 +40,16 @@
 
       <main class="content">
         <section class="panel is-active" role="tabpanel" id="panel-1" aria-labelledby="tab-1" data-section="1" tabindex="0">
+          <p>Hi, I'm <span class="accent">Tobias</span>.</p>
           <p>
-            Placeholder copy for the first section. This area holds the main
-            content and stays a comfortable reading width in the middle of the
-            screen, so the space on either side grows as the display gets wider.
+            I'm a computer science student based in
+            <span class="accent">Munich</span>.
           </p>
-          <div class="palette" role="group" aria-label="Accent color">
+          <p>Why don't you click the glowing orb and see what happens?</p>
+          <div class="field" role="group" aria-label="Accent color">
+            <button type="button" class="igniter" aria-label="Begin">
+              <canvas class="orb-gl" aria-hidden="true"></canvas>
+            </button>
             <button type="button" class="type" style="--type-color: #009e59" aria-pressed="false" aria-label="Grass accent"><img src="assets/types/grass.png" alt="" width="44" height="44" /></button>
             <button type="button" class="type" style="--type-color: #d8453b" aria-pressed="false" aria-label="Fire accent"><img src="assets/types/fire.png" alt="" width="44" height="44" /></button>
             <button type="button" class="type" style="--type-color: #00ade8" aria-pressed="false" aria-label="Water accent"><img src="assets/types/water.png" alt="" width="44" height="44" /></button>

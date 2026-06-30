@@ -10,13 +10,6 @@ Psychic, Fighting, Darkness, Metal, Dragon, Fairy, Colorless:
   `<Type>-attack.png` hosted on <https://archives.bulbagarden.net>.
 - Retrieved: 2026-06-28
 
-The **Rainbow** energy symbol (`rainbow.png`) — also used as the site favicon:
-
-- Source: Bulbagarden Archives / Bulbapedia
-  (<https://bulbapedia.bulbagarden.net/wiki/Energy_card_(TCG)>), file
-  `Rainbow-attack.png` hosted on <https://archives.bulbagarden.net>.
-- Retrieved: 2026-06-28
-
 ### Usage / IP notice
 
 Pokémon and its type symbols are trademarks of **Nintendo, Game Freak, and The
