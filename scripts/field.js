@@ -271,7 +271,11 @@ export function initField({ nebula, reducedMotion }) {
     root.style.setProperty("--accent", color); // selection highlight
     root.style.setProperty("--accent-text", color); // accent-tinted text
     if (nebula) {
-      nebula.startWave(rectUv(ic.btn.getBoundingClientRect()), hexToRgb(color), seed);
+      // reveal: 1 — the lines are hidden until a coloured orb is picked; this is
+      // the wave that paints them in (in this type's colour) behind its front.
+      nebula.startWave(rectUv(ic.btn.getBoundingClientRect()), hexToRgb(color), seed, {
+        reveal: 1,
+      });
     }
   }
 
@@ -336,15 +340,18 @@ export function initField({ nebula, reducedMotion }) {
       ic.scale = 1;
       ic.travel = null;
       ic.btn.classList.remove("is-orb");
-      if (nebula) nebula.startWave([0.5, 0.5], NONE_COLOR, null, { reverse: true });
+      if (nebula)
+        nebula.startWave([0.5, 0.5], NONE_COLOR, null, { reverse: true, reveal: 0 });
       syncPressed();
       renderAll();
       return;
     }
     ic.mode = "releasing"; // stays pinned at the centre while the wave collapses
     syncPressed();
+    // reveal: 0 — deselecting hides the lines again as the colour collapses away.
     nebula.startWave([0.5, 0.5], NONE_COLOR, null, {
       reverse: true,
+      reveal: 0,
       onDone: () => {
         if (ic.mode !== "releasing") return; // a newer pick already took over
         clearAccent();

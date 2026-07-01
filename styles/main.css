@@ -72,6 +72,33 @@ body {
   pointer-events: none;
 }
 
+/* Minimal cursor follower (scripts/cursor.js): a thin ring on top of everything,
+   pointer-events off so it never blocks the orbs or links. JS drives its transform
+   (position + scale); CSS only handles the colour and the fade in/out. */
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease, border-color 0.3s ease;
+  will-change: transform;
+}
+.cursor-ring.is-visible {
+  opacity: 0.55;
+}
+/* On click the ring "implodes" (the canvas effect takes over): hide it instantly,
+   then removing the class lets .is-visible fade it back in over the transition. */
+.cursor-ring.is-imploding {
+  opacity: 0;
+  transition: none;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--bg);
@@ -129,17 +156,22 @@ body {
   color: var(--fg);
 }
 
+/* Pinned to the true lower-left corner of the viewport (not the centred layout),
+   so it hugs the screen edge regardless of the layout's side margins. */
 .copyright {
+  position: fixed;
+  left: clamp(0.7rem, 1.6vw, 1.2rem);
+  bottom: clamp(0.6rem, 1.6vh, 1rem);
   margin: 0;
-  font-size: 0.7em;
+  font-size: 0.56em;
   color: var(--accent-text);
   transition: color 0.35s ease;
+  z-index: 5;
 }
 
-/* Main content (scrolls when it overflows) */
+/* Main content (scrolls when it overflows). This is the element Lenis drives for
+   smooth scrolling (see main.js); the inner wrapper holds the actual content. */
 .content {
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
   padding: 12vh clamp(1.5rem, 4vw, 3.5rem);
   scrollbar-width: none; /* Firefox */
@@ -148,6 +180,14 @@ body {
 
 .content::-webkit-scrollbar {
   display: none; /* Chrome/Safari */
+}
+
+/* The flex column that lets the active panel fill the viewport (so the Home
+   field sits at the bottom). Lenis measures its height as the scroll length. */
+.content-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 /* The active panel fills the content column so the field can claim the lower
@@ -177,6 +217,130 @@ body {
 /* Paragraph break between stacked lines of copy (not before the field). */
 .panel p + p {
   margin-top: 1em;
+}
+
+/* Me section: a pinned "Index" scroller. `.journey` is the tall scroll track,
+   `.journey-stage` is the sticky viewport; journey.js cross-dissolves one
+   `.scene` (eyebrow date / title / paragraph + a ghosted index numeral) into the
+   next as you scroll, with a slim progress spine down the side. Smoothed by Lenis
+   (main.js). The taller `.journey` is, the slower the scroll. */
+.me-panel {
+  width: 100%;
+}
+
+.journey {
+  position: relative;
+  height: 1600vh;
+}
+
+.journey-stage {
+  position: sticky;
+  top: 0;
+  height: 76vh;
+  min-height: 30rem;
+  overflow: hidden;
+  perspective: 1400px; /* depth for the 3D flip scene */
+}
+
+/* The centred column the rail + scenes share. */
+.journey-inner {
+  position: relative;
+  height: 100%;
+  width: min(90%, 40rem);
+  margin-inline: auto;
+}
+
+/* Progress spine: a faint track whose top portion fills with the accent colour
+   as you advance, with a dot riding the boundary (both positioned by JS). */
+.journey-rail {
+  position: absolute;
+  left: 0;
+  top: 16%;
+  bottom: 16%;
+  width: 2px;
+  border-radius: 2px;
+  background: rgba(138, 138, 143, 0.22);
+}
+
+.journey-rail-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent-text);
+  transform-origin: top;
+  transform: scaleY(0);
+  transition: background 0.35s ease;
+}
+
+.journey-rail-dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-text);
+  transform: translate(-50%, 0);
+  transition: background 0.35s ease;
+}
+
+/* Each entry fills the stage and centres its content; journey.js drives the
+   per-frame opacity / drift / blur, so these get NO transition of their own. */
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 2.75rem;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
+.scene.is-active {
+  pointer-events: auto;
+}
+
+/* Oversized ghost numeral behind the copy — the editorial index marker. */
+.journey .scene-num {
+  position: absolute;
+  top: 6%;
+  right: 0;
+  margin: 0;
+  font-size: clamp(7rem, 22vh, 15rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--fg);
+  opacity: 0.05;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.journey .scene-date {
+  margin: 0 0 0.9rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  transition: color 0.35s ease;
+}
+
+.journey .scene-title {
+  margin: 0 0 1rem;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem);
+  line-height: 1.15;
+  color: var(--fg);
+}
+
+.journey .scene-text {
+  margin: 0;
+  max-width: 30rem;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);
+  line-height: 1.7;
 }
 
 /* Highlighted words in the body copy: the basic muted text color when neutral
@@ -305,8 +469,8 @@ body {
 
 .socials {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
   gap: 1.1rem;
   color: var(--accent-text);
   transition: color 0.35s ease;
@@ -315,16 +479,50 @@ body {
 .social {
   display: flex;
   color: inherit;
+  animation: social-wave 5s ease-in-out infinite;
+}
+
+/* Stagger the column so the bob reads as one slow wave travelling down the icons.
+   Negative delays start each icon already offset in the cycle. */
+.social:nth-child(1) {
+  animation-delay: 0s;
+}
+.social:nth-child(2) {
+  animation-delay: -0.7s;
+}
+.social:nth-child(3) {
+  animation-delay: -1.4s;
+}
+.social:nth-child(4) {
+  animation-delay: -2.1s;
+}
+.social:nth-child(5) {
+  animation-delay: -2.8s;
+}
+
+/* Hover scale lives on the icon itself, so it doesn't clash with the wave
+   transform on the .social wrapper. */
+.social svg {
   transition: transform 0.2s ease;
 }
 
-.social:hover {
+.social:hover svg,
+.social:focus-visible svg {
   transform: scale(1.15);
 }
 
 .social:focus-visible {
   outline: none;
-  transform: scale(1.15);
+}
+
+@keyframes social-wave {
+  0%,
+  100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
 }
 
 .type {
@@ -435,6 +633,27 @@ body {
     flex-direction: row;
     gap: 1.5rem;
   }
+
+  .journey {
+    height: 1400vh;
+  }
+
+  .journey-stage {
+    height: calc(100dvh - 9rem);
+    min-height: 26rem;
+  }
+
+  .journey-inner {
+    width: min(88%, 30rem);
+  }
+
+  .scene {
+    padding-left: 2.25rem;
+  }
+
+  .journey .scene-num {
+    font-size: clamp(6rem, 26vh, 11rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -444,12 +663,18 @@ body {
   .igniter.is-firing {
     animation: none;
   }
+  .social {
+    animation: none;
+  }
   .copyright,
   .socials,
   .social,
   .section-link,
   .accent,
-  .type {
+  .type,
+  .journey-rail-fill,
+  .journey-rail-dot,
+  .scene-date {
     transition: none;
   }
 }

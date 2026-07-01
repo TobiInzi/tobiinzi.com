@@ -5,15 +5,56 @@ import { initNebula } from "./nebula.js";
 import { initOrb } from "./orb.js";
 import { initField } from "./field.js";
 import { initTabs } from "./tabs.js";
+import { initJourneyPath } from "./journey.js";
+import { initCursor } from "./cursor.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const igniter = document.querySelector(".igniter");
+const content = document.querySelector(".content");
+const contentInner = document.querySelector(".content-inner");
 
 // The field fires its shockwaves through the nebula, so build the nebula first.
 const nebula = initNebula(reducedMotion);
 const field = initField({ nebula, reducedMotion });
+const journey = initJourneyPath(reducedMotion);
+initCursor(reducedMotion); // pointer trail + click ripples, tinted by --accent
 
 let orb = null; // the WebGL vortex on the igniter; set once its canvas has layout
+let lenis = null; // smooth-scroll instance; stays null under reduced motion / no CDN
+
+// Smooth scrolling, site-wide. .content is the only scroll container on the page
+// (the sidebar/rail are fixed pillars), so wrapping it with Lenis makes every
+// section glide — the Me-section journey rides on it, and any future scrolling
+// panel inherits it for free. Loaded lazily from a CDN; if it fails (offline,
+// blocked) we silently keep native scroll, and journey.js reads the scroll
+// position either way, so nothing breaks.
+if (!reducedMotion && content && contentInner) {
+  import("https://cdn.jsdelivr.net/npm/lenis@1/+esm")
+    .then(({ default: Lenis }) => {
+      lenis = new Lenis({
+        wrapper: content,
+        content: contentInner,
+        lerp: 0.075, // lower = smoother, slower-settling glide
+        wheelMultiplier: 0.9,
+      });
+      const raf = (time) => {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      };
+      requestAnimationFrame(raf);
+    })
+    .catch(() => {}); // CDN unavailable → native scroll
+}
+
+// Carry the background's signature band with the scroll: on the short Home panel
+// it barely moves, but scrolling the tall Me journey drifts it up and off screen.
+if (content && nebula) {
+  content.addEventListener(
+    "scroll",
+    () => nebula.setScroll(content.scrollTop / window.innerHeight),
+    { passive: true }
+  );
+}
 
 function positionIgniter() {
   const { x, y } = field.getTarget();
@@ -25,6 +66,15 @@ function positionIgniter() {
 // the field to reveal the icons and run the load intro.
 function ignite() {
   if (field.isIgnited()) return;
+  // Fire the rainbow shockwave from the orb's centre: it sweeps across the dark
+  // page, but the signature lines stay hidden until a coloured orb is picked.
+  if (nebula) {
+    const r = igniter.getBoundingClientRect();
+    nebula.igniteWave([
+      (r.left + r.width / 2) / window.innerWidth,
+      1 - (r.top + r.height / 2) / window.innerHeight,
+    ]);
+  }
   igniter.classList.add("is-firing"); // pops and fades the orb out
   window.setTimeout(() => {
     igniter.remove();
@@ -65,6 +115,11 @@ initTabs((id) => {
     field.startField();
   } else {
     field.stopField();
+    journey.refresh();
+  }
+  if (lenis) {
+    lenis.resize(); // the active panel's height (the scroll length) just changed
+    lenis.scrollTo(0, { immediate: true }); // start each panel from the top
   }
 });
 
@@ -78,6 +133,7 @@ window.addEventListener("resize", () => {
   requestAnimationFrame(() => {
     resizeQueued = false;
     field.onResize();
+    journey.refresh();
     if (!field.isIgnited()) {
       positionIgniter(); // keep the orb centred until it's clicked
       if (orb) orb.resize();
